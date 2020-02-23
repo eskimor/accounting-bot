@@ -8,42 +8,43 @@
 
 #[cfg(test)]
 mod tests;
+pub mod posting;
+
+use posting::{*};
 
 use std::fmt;
-
-use rust_decimal::Decimal;
 use chrono::naive::NaiveDate;
 
 
+/**
+ *   A very simply transaction type.
+ *
+ *   We only support transaction with exactly two postings, from and to. This is enough for this
+ *   applications and provides stronger guarantees than a vector. (We know we have two postings,
+ *   not one, not zero, but two and we need at least two postings for a valid transaction.
+ */
 struct Transaction {
     description: String,
     date: NaiveDate,
-    postings: Vec<Posting>
+    /// Where the money comes from.
+    from_posting: Posting,
+    /// Where the money goes to.
+    to_posting: Posting
 }
 
-struct Posting {
-    account: String,
-    amount: Decimal,
-}
 
 impl Transaction {
-    fn is_balanced(&self) -> bool {
-        self.postings.iter().map(|p| p.amount).sum::<Decimal>() == 0_i32.into()
+    pub fn is_balanced(&self) -> bool {
+        self.from_posting.amount + self.to_posting.amount == 0_u32.into()
     }
 }
+
 
 impl fmt::Display for Transaction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}   {}", self.date.format("%Y/%m/%d").to_string(), self.description)?;
-        for p in &self.postings {
-            write!(f, "\n    {}", p)?
-        }
+        write!(f, "\n    {}", self.from_posting.render(FormatOption::WithAmount))?;
+        write!(f, "\n    {}", self.to_posting.render(FormatOption::WithoutAmount))?;
         write!(f, "\n\n")
-    }
-}
-
-impl fmt::Display for Posting {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}      {}", self.account, self.amount)
     }
 }
