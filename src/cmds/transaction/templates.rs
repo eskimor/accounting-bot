@@ -1,9 +1,5 @@
 //! Here we get default values for values in our messages not provided out by the user.
-use std::collections::{HashMap};
-use chrono::naive::NaiveDate;
 use rust_decimal::Decimal;
-
-use super::Message;
 
 /// A template can provide values for fields in a `Message` which are not mandatory.
 #[derive(Copy, Clone, Debug)]
