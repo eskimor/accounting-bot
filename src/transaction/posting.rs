@@ -13,13 +13,14 @@ pub enum FormatOption {
     WithoutAmount
 }
 
-pub struct Posting {
-    pub account: String,
+#[derive(Copy,Clone,Debug)]
+pub struct Posting<S> {
+    pub account: S,
     pub amount: Decimal,
 }
 
 
-impl Posting {
+impl<S: fmt::Display> Posting<S> {
     pub fn render(&self, opts: FormatOption) -> String {
         use FormatOption::{*};
         match opts {
@@ -29,8 +30,17 @@ impl Posting {
     }
 }
 
-impl fmt::Display for Posting {
+impl<S: fmt::Display> fmt::Display for Posting<S> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.render(FormatOption::WithAmount))
+    }
+}
+
+impl From<&Posting<&str>> for Posting<String> {
+    fn from(p: &Posting<&str>) -> Self {
+        Posting {
+            account: String::from(p.account),
+            amount: p.amount,
+        }
     }
 }

@@ -9,8 +9,12 @@
 #[cfg(test)]
 mod tests;
 pub mod posting;
+pub mod message;
+mod templates;
 
 use posting::{*};
+use message::Message;
+use templates::Templates;
 
 use std::fmt;
 use chrono::naive::NaiveDate;
@@ -23,24 +27,43 @@ use chrono::naive::NaiveDate;
  *   applications and provides stronger guarantees than a vector. (We know we have two postings,
  *   not one, not zero, but two and we need at least two postings for a valid transaction.
  */
-struct Transaction {
-    description: String,
-    date: NaiveDate,
+#[derive(Copy,Clone,Debug)]
+pub struct Transaction<S> {
+    pub description: S,
+    pub date: NaiveDate,
     /// Where the money comes from.
-    from_posting: Posting,
+    pub from_posting: Posting<S>,
     /// Where the money goes to.
-    to_posting: Posting
+    pub to_posting: Posting<S>
 }
 
-
-impl Transaction {
+impl<S> Transaction<S> {
     pub fn is_balanced(&self) -> bool {
         self.from_posting.amount + self.to_posting.amount == 0_u32.into()
     }
 }
 
+impl Transaction<String> {
+    /// Parse a message directly into a `Transaction`.
+    ///
+    /// Templates will be looked up for filling out missing fields.
+    pub fn parse_message(templates: &Templates, msg: &str) -> Self {
+        Message::parse(msg).to_transaction(templates)
+    }
+}
 
-impl fmt::Display for Transaction {
+impl From<&Transaction<&str>> for Transaction<String> {
+    fn from(t: &Transaction<&str>) -> Self {
+        Transaction {
+            description: String::from(t.description),
+            date: t.date,
+            from_posting: Posting::from(&t.from_posting),
+            to_posting: Posting::from(&t.to_posting),
+        }
+    }
+}
+
+impl<S: fmt::Display> fmt::Display for Transaction<S> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}   {}", self.date.format("%Y/%m/%d").to_string(), self.description)?;
         write!(f, "\n    {}", self.from_posting.render(FormatOption::WithAmount))?;

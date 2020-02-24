@@ -1,3 +1,4 @@
+// extern crate accounting_bot;
+
 fn main() {
-    println!("Hello, world!");
 }
