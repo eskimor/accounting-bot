@@ -16,9 +16,8 @@ use rust_decimal::Decimal;
 ///
 /// This type represents what the user can enter, see Readme.md for details.
 ///
-/// By filling out missing information by use of `templates::Templates` This can be turned into a
+/// By filling out any missing information by means of `templates::Templates`, a `Message` can be turned into a
 /// proper `Transaction`.
-///
 #[derive(Clone,Debug)]
 pub struct Message {
     /// Description as found in the message.
