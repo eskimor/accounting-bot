@@ -46,7 +46,7 @@ fn transaction_string_has_expected_format() {
     };
     let expected_output = indoc!("
         2020/02/23   Test
-            assets:giro      -3.14
+            assets:giro      -3.14 EUR
             expenses:other
 
         ");

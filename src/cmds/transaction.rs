@@ -20,7 +20,7 @@ use rust_decimal::Decimal;
 /// proper `Transaction`.
 ///
 #[derive(Clone,Debug)]
-struct Message {
+pub struct Message {
     /// Description as found in the message.
     description: String,
     /// The amount is optional, as the description will be looked up in known transaction and the
@@ -47,7 +47,7 @@ pub struct Transaction {
 
 impl Message {
     pub fn parse(msg: &str) -> Message {
-        let mut words = msg.split(' ');
+        let mut words = msg.trim().split(' ');
         let mut raw_description: Vec<&str> = Vec::new();
         let mut amount = None;
         for w in words.by_ref() {
@@ -73,7 +73,7 @@ impl Message {
 
 /// What can go wrong when going from `Message` to `Transaction`?
 #[derive(Copy, Clone, Debug)]
-enum InvalidTransaction {
+pub enum InvalidTransaction {
     AmountMissing,
     FromAccountMissing,
     ToAccountMissing
@@ -110,7 +110,7 @@ impl TryFrom<Message> for Transaction {
 impl fmt::Display for Transaction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}   {}", self.date.format("%Y/%m/%d").to_string(), self.description)?;
-        write!(f, "\n    {}      {}", self.from_account, -self.amount)?;
+        write!(f, "\n    {}      {} EUR", self.from_account, -self.amount)?;
         write!(f, "\n    {}", self.to_account)?;
         write!(f, "\n\n")
     }
