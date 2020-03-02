@@ -45,6 +45,10 @@ fn word_lookup (w: &str) -> Option<Template> {
             to_account: Some("expenses:leisure"),
             ..DEFAULT_TEMPLATE
         }),
+        "Mann"  => Some(Template {
+            to_account: Some("expenses:leisure"),
+            ..DEFAULT_TEMPLATE
+        }),
         _ => None
     }
 }
