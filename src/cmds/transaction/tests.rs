@@ -29,6 +29,14 @@ fn expenses_can_be_abbreviated() {
 }
 
 #[test]
+fn user_input_takes_precedence_over_template() {
+    let tr = mk_transaction("Mittagstisch 4.40 giro presents");
+    assert_eq!(&tr.to_account, "expenses:presents");
+    assert_eq!(&tr.from_account, "assets:giro");
+    assert_eq!(tr.amount, Decimal::new(440, 2));
+}
+
+#[test]
 fn german_comma_is_accepted() {
     let tr = mk_transaction("stuff 3,40 bank-account life");
     assert_eq!(tr.amount, Decimal::new(340, 2));
