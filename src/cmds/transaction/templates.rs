@@ -53,6 +53,16 @@ fn word_lookup (w: &str) -> Option<Template> {
             to_account: Some("expenses:leisure"),
             ..DEFAULT_TEMPLATE
         }),
+        "Kaffee"  => Some(Template {
+            amount: Some(Decimal::new(50, 2)),
+            to_account: Some("expenses:leisure"),
+            ..DEFAULT_TEMPLATE
+        }),
+        "Bankomat"  => Some(Template {
+            amount: Some(Decimal::new(5000, 2)),
+            from_account: Some("assets:giro"),
+            to_account: Some("assets:cash"),
+        }),
         _ => None
     }
 }
