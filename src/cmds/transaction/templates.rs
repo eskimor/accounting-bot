@@ -63,6 +63,11 @@ fn word_lookup (w: &str) -> Option<Template> {
             from_account: Some("assets:giro"),
             to_account: Some("assets:cash"),
         }),
+        "Sauna"  => Some(Template {
+            amount: Some(Decimal::new(800, 2)),
+            from_account: Some("assets:giro"),
+            to_account: Some("expenses:leisure"),
+        }),
         _ => None
     }
 }
