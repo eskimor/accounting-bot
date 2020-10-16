@@ -10,41 +10,46 @@ use tbot::types::user::Id;
 // Todo: Better error management - always report them to the user.
 #[tokio::main]
 async fn main() {
-    let mut bot = tbot::from_env!("BOT_TOKEN").event_loop();
+    env_logger::init();
+    loop {
+        let mut bot = tbot::from_env!("BOT_TOKEN").event_loop();
 
-    bot.text(|context| {
-        async move {
-            // Auth check:
-			if let Some(user) = &context.from {
-				if user.id != Id(53228920) {
-                   let resp = format!("Nice try {}, but computer says No!", user.first_name);
-                   let call_result = context.send_message(&resp).call().await;
-				   if let Err(err) = call_result {
-                       dbg!(err);
-                   }
-                   return;
-				}
-			}
-            let msg = &context.text.value;
-			let resp = match Transaction::try_from(Message::parse(msg)) {
-				Err(e) => format!("Error: {:?}", e),
-				Ok(tr) => {
-                    {
-                        let mut ledger = OpenOptions::new().create(true).append(true).open("bot.ledger").expect("bot.ledger could not be opened!");
-                        ledger.write(format!("{}", tr).as_bytes()).expect("bot.ledger coult not be written to!");
-                    }// Make sure file is written, before sending success.
-					format!("Added this to the ledger:\n\n{}", tr)
-				}
-			};
-            let call_result = context.send_message(&resp).call().await;
+        bot.text(|context| {
+            async move {
+                // Auth check:
+                if let Some(user) = &context.from {
+                    if user.id != Id(53228920) {
+                       let resp = format!("Nice try {}, but computer says No!", user.first_name);
+                       let call_result = context.send_message(&resp).call().await;
+                       if let Err(err) = call_result {
+                           dbg!(err);
+                       }
+                       return;
+                    }
+                }
+                let msg = &context.text.value;
+                let resp = match Transaction::try_from(Message::parse(msg)) {
+                    Err(e) => format!("Error: {:?}", e),
+                    Ok(tr) => {
+                        {
+                            let mut ledger = OpenOptions::new().create(true).append(true).open("private.ledger").expect("private.ledger could not be opened!");
+                            ledger.write(format!("{}", tr).as_bytes()).expect("private.ledger coult not be written to!");
+                        }// Make sure file is written, before sending success.
+                        format!("Added this to the ledger:\n\n{}", tr)
+                    }
+                };
+                let call_result = context.send_message(&resp).call().await;
 
-            if let Err(err) = call_result {
-                dbg!(err);
+                if let Err(err) = call_result {
+                    dbg!(err);
+                }
             }
-        }
-    });
+        });
 
-    bot.polling().start().await.unwrap();
+            let r = bot.polling().start().await;
+            log::info!("bot.polling.start() exited with: {:?}", r);
+            std::thread::sleep(std::time::Duration::from_secs(2));
+    }
 }
 
 
