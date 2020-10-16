@@ -10,8 +10,16 @@ edition = "2018"
 chrono = "0.4.10"
 futures = "0.1.28"
 rust_decimal = "1.2.1"
-tbot = "0.5.0"
+tbot = "0.6"
 tokio = { version = "0.2", features = ["full"] }
+env_logger = "0.7.1"
+log = "0.4.8"
 
 [dev-dependencies]
 indoc = "0.3.4"
+
+# Supposed to speed up build times ... (doesn't really)
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    "-C", "link-arg=-fuse-ld=lld",
+]
