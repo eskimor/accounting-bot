@@ -28,7 +28,7 @@ pub fn lookup_description(desc: &str) -> Template {
 fn word_lookup (w: &str) -> Option<Template> {
     match w {
         "Mittagstisch" => Some(Template {
-            amount: Some(Decimal::new(-350, 2)),
+            amount: Some(Decimal::new(350, 2)),
             ..DEFAULT_TEMPLATE
             }),
         "Billa" => Some(DEFAULT_TEMPLATE),
