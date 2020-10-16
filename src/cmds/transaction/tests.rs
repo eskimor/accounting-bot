@@ -53,10 +53,10 @@ fn transaction_string_has_expected_format() {
         to_account: "expenses:other".to_string(),
     };
     let expected_output = indoc!("
+
         2020/02/23   Test
             assets:giro      -3.14 EUR
             expenses:other
-
         ");
     assert_eq!(format!("{}", t), expected_output);
 }

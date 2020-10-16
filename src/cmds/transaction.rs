@@ -108,10 +108,10 @@ impl TryFrom<Message> for Transaction {
 
 impl fmt::Display for Transaction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}   {}", self.date.format("%Y/%m/%d").to_string(), self.description)?;
+        write!(f, "\n{}   {}", self.date.format("%Y/%m/%d").to_string(), self.description)?;
         write!(f, "\n    {}      {} EUR", self.from_account, -self.amount)?;
         write!(f, "\n    {}", self.to_account)?;
-        write!(f, "\n\n")
+        write!(f, "\n")
     }
 }
 
